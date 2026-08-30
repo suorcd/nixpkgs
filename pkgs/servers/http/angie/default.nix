@@ -7,7 +7,7 @@
   ...
 }@args:
 
-callPackage ../nginx/generic.nix args rec {
+(callPackage ../nginx/generic.nix args rec {
   pname = "angie";
   version = "1.12.1";
 
@@ -48,4 +48,11 @@ callPackage ../nginx/generic.nix args rec {
       suorcd
     ];
   };
-}
+}).overrideAttrs (old: {
+  patches = lib.filter
+    (p: !(lib.hasInfix "sizeof_test_fix" (toString p)
+      || lib.hasInfix "feature_test_fix" (toString p)
+      || lib.hasInfix "sys_nerr" (toString p)
+      || lib.hasInfix "endianness_fix" (toString p)))
+    old.patches;
+})
